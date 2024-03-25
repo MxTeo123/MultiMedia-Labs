@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script type="text/javascript">
+      document.addEventListener("DOMContentLoaded", app);
+      function app() {
+        //1. Model
+        const canvas = document.querySelector("canvas");
+        const W = canvas.width,
+          H = canvas.height;
+        const context = canvas.getContext("2d");
+
+        const audio = document.createElement("audio");
+        audio.controls = true;
+        document.body.append(audio);
+
+        const lista = ["1.mp3", "2.mp3", "3.mp3"];
+        let index = -1;
+
+        //2. Desenare
+        function desenare() {
+          context.fillStyle = "silver";
+          context.fillRect(0, 0, W, H);
+
+          let pozitie = 0;
+          if (audio.currentTime && audio.duration) {
+            pozitie = audio.currentTime / audio.duration;
+          }
+
+          context.fillStyle = "coral";
+          context.fillRect(5, 5, pozitie * (W - 10), 30);
+          context.strokeStyle = "black";
+          context.strokeRect(5, 5, W - 10, 30);
+
+          context.fillRect(5, 45, 30, 10);
+          context.strokeRect(5, 45, 30, 10);
+          if (audio.paused) {
+            //daca este pauza deseneaza buton play
+            //respectiv butonul de pauza daca este false
+          }
+
+          requestAnimationFrame(desenare);
+        }
+        desenare();
+
+        //4. Event handlers
+        function avanseaza() {
+          index = (index + 1) % lista.length;
+          audio.src = lista[index];
+          audio.load();
+          audio.play();
+        }
+
+        canvas.addEventListener("click", e => {
+          if (index === -1) {
+            avanseaza();
+          }
+
+          const mx = e.pageX - canvas.getBoundingClientRect().left;
+          const my = e.pageY - canvas.getBoundingClientRect().top;
+
+          if (
+            audio.duration &&
+            5 <= mx &&
+            mx <= 5 + W - 10 &&
+            5 <= my &&
+            my <= 35
+          ) {
+            const pozitie = (mx - 5) / (W - 10);
+            audio.currentTime = pozitie * audio.duration;
+          }
+
+          if (5 <= mx && mx <= 5 + 30 && 45 <= my && my <= 45 + 10) {
+            if (audio.paused) {
+              audio.play();
+            } else {
+              audio.pause();
+            }
+          }
+        });
+
+        audio.addEventListener("ended", avanseaza);
+      }
+    </script>
+  </head>
+  <body>
+    <!--<audio src="1.mp3" controls="controls"></audio>-->
+    <canvas width="200" height="80"></canvas>
+  </body>
+</html>

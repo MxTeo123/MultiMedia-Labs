@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>HTML 5 Chart</title>
+    </head>
+    <body>
+        <canvas id="canvas">
+            Your browser does not support canvas element.
+        </canvas>
+
+        <script src="barchar.js" ></script>
+
+        <script>
+            'use strict';
+            
+            const canvas=document.getElementById('canvas');
+            //copnsole.log(canvas);
+
+            const chart=new BarChart(canvas);
+            //console.log(chart.#canvas);
+
+            chart.draw([3,4,5]);
+        </script>
+        
+    </body>
+</html>

@@ -1,0 +1,13 @@
+jQuery -> $
+
+1) $('sel CSS')
+2) $(elem)
+3) $('cod HTML')
+4) $(functie)  // executa functia cand se incarca DOM-ul
+
+.ath("nume", "val")
+.css("nume", "val")
+.text("val")
+.val("val")
+.on("eveniment", functie)
+

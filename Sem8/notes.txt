@@ -1,0 +1,5 @@
+                                            ---------- requestAnimationFrom
+   3)Actualizare() --> setInterval          |
+     |-----1) Model----------------2)Desenare()-----> Browser
+               |                                         |
+               |---------4)Event Handlers---------------------------------                        

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>HTML5 Chart</title>
+    </head>
+    <body>
+        <canvas id="canvas" style="width: 500px;">
+            Your browser does not support the canvas element.
+        </canvas>
+
+        <script src="bar-chart-library.js"></script>
+        <script>
+            'use strict';
+            const canvas = document.getElementById('canvas'); 
+            canvas.width=500;
+            //console.log(canvas);
+
+            const chart = new BarChart(canvas);
+            //console.log(chart.#canvas);
+            chart.draw([300,200,100]);
+
+        </script>
+    </body>
+</html>

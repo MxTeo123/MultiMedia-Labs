@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+
+<!--y=INT(grad acces pop la internet)
+x=PIB-->
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style type="text/css">
+        canvas {
+            display: block;
+            border: 1px solid black;
+            margin: auto;
+        }
+    </style>
+    <script type="text/javascript">
+
+        // vezi http://ec.europa.eu/eurostat/web/json-and-unicode-web-services/getting-started/rest-request pentru format
+        const baseUrl = 'http://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json/en/';
+
+        const tari = ["BG", "CZ", "HR", "HU", "PL", "RO", "SK"];
+        const ani = [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017];
+        const indicatori = [
+            { nume: 'INT', param: 'tin00028?ind_type=IND_TOTAL&filterNonGeo=1&precision=1&unit=PC_IND&indic_is=I_ILT12' },
+            { nume: 'POP', param: 'tps00001?indic_de=JAN&filterNonGeo=1&precision=1' },
+            { nume: 'PIB', param: 'tec00114?indic_de=JAN&filterNonGeo=1&precision=1' }
+        ];
+
+        //https://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json/en/
+        //tps00001?precision=1
+        //&geo=BG&geo=CZ
+        //&time=2009&time=2013&time=2015
+
+        function getUrl(numeIndicator) {
+            let url = baseUrl;
+            url += indicatori.find(item => item.nume === numeIndicator).param;
+            url += '&' + tari.map(item => `geo=${item}`).join(`&`);
+            url += '&' + ani.map(item => `geo=${item}`).join(`&`);
+            tari.map(item => `geo=${item}`);
+            return url;
+        }
+
+        async function getDate() {
+            let rezultat = [];
+            for (let indicator of indicatori) {
+                let raspuns = await fetch(getUrl(indicator.nume));
+                let date = await raspuns.json();
+
+                let index = 0;
+                for (let tara of tari) {
+                    for (let an of ani) {
+                        rezultat.push({
+                            'tara': tara,
+                            'an': an,
+                            'indicator': indicator.nume,
+                            'valoare': date.value[index] === undefined ? 0 : date.value[index]
+                        });
+                        index++;
+                    }
+                }
+            }
+           
+            //rezultat = date.value;
+            return rezultat;
+        }
+
+        let date = null;
+        document.addEventListener('DOMContentLoaded', app);
+        async function app() {
+            date = await getDate();
+            //console.log(date);
+            date = date.map(item => {
+                const valori = date.filter(x => x.indicator === item.indicator).map(x => x.valoare);
+                const min = Math.min(...valori);
+                const max = Math.max(...valori);
+                item.valoareNormalizata = (item.valoare - min) / (max - min);
+                return item;
+            })
+            //console.table(date);
+            let an = 2008;
+            const canvas = document.querySelector('canvas');
+            const W = canvas.width, H = canvas.height;
+            const context = canvas.getContext('2d');
+
+            function desenareGrafic(an, indX, indY, indR) {
+                for (let tara of tari) {
+                    let x = date.find(item => item.an === an && item.tara === tara && item.indicator === indX).valoareNormalizata * W;
+                    let y = H - date.find(item => item.an === an && item.tara === tara && item.indicator === indY).valoareNormalizata * H;
+                    let r = 10 + date.find(item => item.an === an && item.tara === tara && item.indicator === indR).valoareNormalizata * 50;
+
+                    context.beginPath();
+                    context.moveTo(x + r, y);
+                    context.arc(x, y, r, 0, 2 * Math.PI);
+                    context.fillStyle = `hsla(${tari.findIndex(x => x === tara) * 50}, 100%, 50%, 0.7)`;
+                    context.strokeStyle = 'black';
+                    context.fill();
+                    context.stroke();
+
+                    context.fillStyle = 'black';
+                    context.fillText(tara, x, y);
+                }
+            }
+            desenareGrafic(an, 'PIB', 'INT', 'POP');
+        }
+
+    </script>
+</head>
+<body>
+    <p>
+        <span>2008</span>
+        <input type="button" value=">" />
+    </p>
+    <canvas width="600" height="400"></canvas>
+</body>
+</html>

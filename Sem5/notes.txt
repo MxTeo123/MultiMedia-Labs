@@ -1,0 +1,18 @@
+
+              
+            __.getContext('2d')__
+            |                  |
+Canvas - plan?a             Context:
+             |----------------Atribute: -strokeStyle           Lista Figuri (fill/stroke)
+         strokeRect/FillRect(x,y,w,h)  -fillStyle                     |
+                                       -lineWidth                     |
+                                                                      |
+                            					.rect(x,y,w,h) -> deseneaza dreptunghi
+                           					.moveTo(x,y) -> muta de la poz curenta catre o alta
+                           					.lineTo(x,y) -> deseneaza o linie din linia curenta
+                            					.adc(x,y,r,sa,ea) -> arc de cerc; sa, ea - start/end area
+                           					.beginPath()
+                         					  .closePath()
+
+v = [8, 3, 6, 4] => sa genereze un grafic
+

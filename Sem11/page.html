@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script type="text/javascript">
+      document.addEventListener("DOMContentLoaded", app);
+      function app() {
+        let video1 = document.createElement("video");
+        video1.src = "da.mp4";
+        video1.load();
+        // video1.controls = true;
+        //document.body.append(video1);
+
+        let video2 = document.createElement("video");
+        video2.src = "nu.mp4";
+        video2.load();
+        //video2.controls = true;
+        //document.body.append(video2);
+
+        const canvas = document.querySelector("canvas");
+        const W = canvas.width,
+          H = canvas.height;
+        const context = canvas.getContext("2d");
+
+        const vx = 15,
+          vy = 15,
+          vw = 128,
+          vh = 72;
+        let afisare = false;
+
+        function desenare() {
+          context.drawImage(video1, 0, 0);
+          if (afisare) {
+            context.drawImage(video2, vx, vy, vw, vh);
+
+            context.fillStyle = "rgba(200, 200, 200, 0.8)";
+            context.strokeStyle = "rgba(200, 200, 200, 0.8)";
+            context.lineWidth = 5;
+            context.beginPath();
+            context.arc(W / 2, H / 2, H / 4, 0, 2 * Math.PI);
+            context.stroke();
+
+            if (!video1.paused) {
+              context.fillRect(W / 2 - H / 8, H / 2 - H / 8, H / 4, H / 6);
+            } else {
+              context.beginPath();
+              context.moveTo(W / 2 - H / 8 + H / 32, H / 2 - H / 8);
+              context.lineTo(W / 2 - H / 8 + H / 32, H / 2 + H / 8);
+              context.lineTo(W / 2 + H / 8 + H / 32, H / 2);
+              context.closePath();
+              context.fill();
+            }
+          }
+          context.drawImage(video1, vx, vy, vw, vh);
+          requestAnimationFrame(desenare);
+        }
+        desenare();
+
+        canvas.addEventListener("click", e => {
+          const mx = e.clientX - canvas.getBoundingClientRect().left;
+          const my = e.clientY - canvas.getBoundingClientRect().top;
+          if (vx <= mx && mx <= vx + vw && vy <= my && my <= vy + vh) {
+            schimba();
+          } else {
+            if (video1.paused) {
+              video1.play();
+            } else {
+              video1.pause();
+            }
+          }
+        });
+
+        canvas.addEventListener("mouseenter", e => (afisare = true));
+        canvas.addEventListener("mouseleave", e => (afisare = false));
+
+        video1.addEventListener("ended", sfarsit);
+        video2.addEventListener("ended", sfarsit);
+
+        function sfarsit(e) {
+          if (e.target === video1) {
+            schimba();
+          } else {
+            video2.currentTime = 0;
+            video2.play();
+          }
+        }
+
+        function schimba() {
+          let temp = video1;
+          video1 = video2;
+          video2 = temp;
+
+          video1.currentTime = 0;
+          video1.play();
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas width="640" height="360"></canvas>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Canvas</title>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', app);
+        function app() {
+            const canvas = document.querySelector('canvas');
+            const W = canvas.width, H = canvas.height;
+
+            const context = canvas.getContext('2d');
+
+           // context.lineWidth = 3;
+
+           // context.fillRect(W / 2, H / 2, W / 2, H / 2);
+           // context.strokeRect(W / 2, H / 2, W / 2, H / 2);
+
+           // context.moveTo(0, 0);  //adauga in lista
+           //// context.beginPath();   // sterge lista
+           // context.lineTo(W / 2, H / 4);
+           // context.lineTo(0, H / 2);
+           // context.closePath();
+
+           // context.strokeStyle = 'blue';
+           // context.stroke();
+
+           // context.strokeStyle = 'black';
+           // context.beginPath();
+           // context.arc(W / 4, 3 * H / 4,
+           //     Math.min(W, H) / 4, 0, 2 * Math.PI);
+           // context.stroke();
+
+            function grafic(v) {
+                context.fillStyle = 'white';
+                context.strokeStyle = 'black';
+                context.fillRect(0, 0, W, H);
+                context.strokeRect(0, 0, W, H);
+
+                const n = v.length;
+                const w = W / n;
+                const f = H / Math.max.apply(null, v);
+
+                context.beginPath();
+                for (let i = 0; i < n; i++) {
+                    let wi = w;
+                    let hi = v[i] * f;
+                    let xi = i * w;
+                    let yi = H - hi;
+
+                    context.rect(xi, yi, wi, hi);
+                }
+                context.fillStyle = 'red';
+                context.fill();
+                context.stroke();
+            }
+
+            document.querySelector('#btnGrafic')
+                .addEventListener('click', () => {
+                    const v = document
+                        .querySelector('#txtValori')
+                        .value
+                        .split(',')
+                        .map(val => parseInt(val, 10));
+                    grafic(v);
+                });
+        }
+       
+    </script>
+</head>
+<body>
+    <p>
+        Valori:
+        <input type="text" id="txtValori" value="8,2,4,2,45,21,42" />
+        <input type="button" id="btnGrafic" value="Grafic" />
+    </p>
+    <canvas width="600" height="400"></canvas>
+</body>
+</html>
